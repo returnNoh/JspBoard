@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="NIW.*,java.util.*"%>
+    pageEncoding="UTF-8" import="NIW.*,java.util.*,java.text.SimpleDateFormat"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -9,10 +9,38 @@
 <%
 		request.setCharacterEncoding("UTF-8");
 		BoardDAO dao = new BoardDAO();
-		int count = dao.getArticleCount();
-		int page_num=0;
-		ArrayList<BoardDTO> list = dao.getArticles(page_num, 5);
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd HH:mm");
+		//1 현재페이지
+		String PageNum = request.getParameter("pageNum"); // 문자열 현재페이지
+		if(PageNum==null)PageNum="1";
+		int currentPage = Integer.parseInt(PageNum); // 숫자 현재페이지
+		
+
+		//3 보여줄 단위 개수 (레코드 , 페이지 , 블록 ) 설정
+				int pageSize = 10;         // 한페이지당 보여주는 레코드갯수    
+			    int blockSize = 10;    //한 블록당 보여주는 페이지의 수
+		
+		//2 전체 레코드 개수 확인
+		int count = dao.getArticleCount(); // 레코드개수
+			    
+		// DB상의 레코드 시작 번호 limit 수치
+		int startRow = (currentPage-1)*pageSize+1;
+		// 
+		int endRow = currentPage*pageSize;
+		
+		//4 전체 레코드 수를 참고하여 전체 페이지, 블록 설정
+		 int totalPage=(int)Math.ceil((double)count/pageSize) ;			//전체 페이지 개수
+		int totalBlock=(int)Math.ceil((double)totalPage/blockSize);		//전체 블록 개수
+		
+	    
+		int beginPerPage =   currentPage * pageSize;
+		
+		
+		
+		
+		ArrayList<BoardDTO> list = dao.getArticles(currentPage, pageSize);
 		BoardDTO dto = null;
+			
 %>
 <body bgcolor="#e0ffff">
 <center><b>글목록(전체 글:<%=count%>)</b>

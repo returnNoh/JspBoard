@@ -8,6 +8,8 @@
 <%
 request.setCharacterEncoding("UTF-8");
 
+// num , writer , subject , email , content , passwd
+
 
 
 

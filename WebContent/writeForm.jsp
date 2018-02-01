@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>게시판</title>
@@ -8,7 +11,7 @@
 <body bgcolor="#e0ffff">  
 <center><b>글쓰기</b>
 <br>
-
+<form method="post" action="writepro.jsp" >
 <table width="400" border="1" cellspacing="0" cellpadding="0"  bgcolor="#e0ffff" align="center">
    <tr>
     <td align="right" colspan="2" bgcolor="#b0e0e6">
@@ -39,6 +42,7 @@
     <td  width="70"  bgcolor="#b0e0e6" align="center" >비밀번호</td>
     <td  width="330" >
      <input type="password" size="8" maxlength="12" name="passwd"> 
+     <input type="hidden" name="ip" value="<%=request.getRemoteAddr() %>"> 
 	 </td>
   </tr>
 <tr>      

@@ -58,7 +58,7 @@ public class BoardDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		boolean check = false;
-		ArrayList<BoardDTO> zipcode = new ArrayList();
+		ArrayList<BoardDTO> zipcode = new ArrayList(end); // 생성자로 초기 공간을 지정
 		BoardDTO code ;
 		
 		String sql = "select  * from board order by ref desc,re_step asc limit "+start+","+end;
@@ -68,10 +68,8 @@ public class BoardDAO {
 			
 			System.out.println(sql);
 			System.out.println(rs=pstmt.executeQuery());
-			
-			
-			
-			while(rs.next()) {
+			if(rs.next()) {
+			do {
 				
 				code = new BoardDTO();
 				code.setNum(rs.getInt("num"));
@@ -89,10 +87,8 @@ public class BoardDAO {
 				zipcode.add(code);
 				
 			}
-			
-			
-			
-			
+			while(rs.next());
+			}
 		}catch(Exception e) {
 			System.out.println("게시글 정보불러오기 실패"+e);
 		}finally {
@@ -100,6 +96,9 @@ public class BoardDAO {
 		}
 		return zipcode;
 	}
+	
+	
+	
 	
 		public BoardDTO getContent(int num) {
 		
@@ -142,9 +141,54 @@ public class BoardDAO {
 			return dto;
 	
 }	
-		public boolean boardWrite() {
-			return true;
+		
+		
+		
+		
+		public boolean boardWrite(BoardDTO dto) {
+			
+			System.out.println("boardWrite (new) 메소드 시작");
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			boolean check =false;
+			
+			
+			String sql = "insert into board values(?,?,?,?,?,?,0,0,0,0,?,?)"; // 신규니깐 기본값이 0인것은 0으로 지정해도됨.
+			try {
+			
+				con=pool.getConnection();
+				pstmt=con.prepareStatement(sql);
+				pstmt.setInt(1, dto.getNum());
+				pstmt.setString(2, dto.getWriter());
+				pstmt.setString(3, dto.getEmail());
+				pstmt.setString(4, dto.getSubject());
+				pstmt.setString(5, dto.getPasswd());
+				pstmt.setTimestamp(6, dto.getReg_date());
+				//pstmt.setInt(7, dto.getReadcount()); // 0이여도 됨
+				//pstmt.setInt(8, dto.getRef()); //0 이여도됨
+				//pstmt.setInt(9, dto.getRe_step()); // 0이여도 됨
+				//pstmt.setInt(10, dto.getRe_level()); // 0이여도 됨
+				pstmt.setString(11, dto.getContent());
+				pstmt.setString(12, dto.getIp());
+				
+				int check2=pstmt.executeUpdate();
+				if(check2>0)check=true;
+				
+				System.out.println(sql);
+	}catch(Exception e) {
+		System.out.println("게시글 작성 실패"+e);
+	}finally {
+		pool.freeConnection(con,pstmt);
+	}
+			
+			return check;
 		}
+		
+		
+		
+		
+		
+		
 		public boolean boardDelete(String passwd,int num) {
 			
 			Connection con = null;

@@ -1,10 +1,20 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>게시판</title>
 <link href="style.css" rel="stylesheet" type="text/css">
+<%
+request.setCharacterEncoding("UTF-8");
+
+int num = Integer.parseInt(request.getParameter("num"));
+
+
+%>
 
 <script language="JavaScript">      
-<!--      
+
   function deleteSave(){	
 	if(document.delForm.passwd.value==''){
 	alert("비밀번호를 입력하십시요.");
@@ -12,7 +22,7 @@
 	return false;
  }
 }    
-// -->      
+
 </script>
 </head>
 
@@ -29,7 +39,7 @@
   <tr height="30">
      <td align=center >비밀번호 :   
        <input type="password" name="passwd" size="8" maxlength="12">
-	   <input type="hidden" name="num" value="1234"></td>
+	   <input type="hidden" name="num" value="<%=num%>"></td>
  </tr>
  <tr height="30">
     <td align=center bgcolor="<%=value_c%>">

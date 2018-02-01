@@ -7,12 +7,13 @@
 <link href="style.css" rel="stylesheet" type="text/css">
 <script language="JavaScript" src="script.js"></script>
 </head>
-<body bgcolor="#e0ffff">  
+<body bgcolor="#e0ffff" onload="set_value()">  
+
 <%
 request.setCharacterEncoding("UTF-8");
 String num = request.getParameter("num");
-
 %>
+
 <center><b>글수정</b>
 <br>
 <form method="post" name="writeform" action="updatePro.jsp?pageNum=3" onsubmit="return writeSave()">
