@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="NIW.*"%>
+    pageEncoding="UTF-8" import="NIW.*,java.text.SimpleDateFormat"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,7 +19,14 @@ if(request.getParameter("pageNum")!=null)
 pageNum =Integer.parseInt(request.getParameter("pageNum"));
 
 BoardDTO dto = dao.getContent(num);
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh mm");
+/* 
+링크에 쓸 때 링크가 길어질수 있어서 변수화.
+int ref = dto.getRef();
+int re_step=dto.getRe_step();
+int re_level=dto.getRe_level();
 
+ */
 %>
 
 <body bgcolor="#e0ffff" onload="setting()">  
@@ -41,7 +48,7 @@ BoardDTO dto = dao.getContent(num);
 	     <%=dto.getWriter() %></td>
     <td align="center" width="125" bgcolor="#b0e0e6" >작성일</td>
     <td align="center" width="125" align="center">
-	     <%=dto.getReg_date() %></td>
+	     <%=sdf.format(dto.getReg_date()) %></td>
   </tr>
   <tr height="30">
     <td align="center" width="125" bgcolor="#b0e0e6">글제목</td>
@@ -50,7 +57,8 @@ BoardDTO dto = dao.getContent(num);
   </tr>
   <tr>
     <td align="center" width="125" bgcolor="#b0e0e6">글내용</td>
-    <td align="left" width="375" colspan="3"><pre><%=dto.getContent() %></pre></td>
+    <td align="left" width="375" colspan="3"><pre><%=dto.getContent() %></pre></td> 
+    <!-- pre태그는 줄바꿈(br)을 따로 안해도 되게 원본 그대로 (줄바꿈까지 포함해서) 표시하게 해준다.-->
   </tr>
   
   <tr height="30">      
@@ -65,7 +73,7 @@ BoardDTO dto = dao.getContent(num);
        onclick="document.location.href='writeForm.jsp?num=<%=dto.getNum()%>&ref=<%=dto.getRef()%>&re_step=<%=dto.getRe_step()%>&re_level=<%=dto.getRe_level()%>'">
 	   &nbsp;&nbsp;&nbsp;&nbsp;
        <input type="button" value="글목록" 
-       onclick="document.location.href='list.jsp?pageNum=1'">
+       onclick="document.location.href='list.jsp?pageNum=<%=pageNum%>'">
     </td>
   </tr>
 </table>    

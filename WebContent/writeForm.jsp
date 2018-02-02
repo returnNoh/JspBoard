@@ -31,7 +31,7 @@
      <input type="hidden" name="ref" value="<%=ref%>"> 
      <input type="hidden" name="re_step" value="<%=re_step%>"> 
      <input type="hidden" name="re_level" value="<%=re_level%>"> 
-     <input type="hidden" name="ip" value="<%=request.getRemoteAddr() %>"> 
+     
 <table width="400" border="1" cellspacing="0" cellpadding="0"  bgcolor="#e0ffff" align="center">
    <tr>
     <td align="right" colspan="2" bgcolor="#b0e0e6">

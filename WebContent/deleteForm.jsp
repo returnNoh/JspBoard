@@ -8,7 +8,8 @@
 <%
 request.setCharacterEncoding("UTF-8");
 
-int num = Integer.parseInt(request.getParameter("num"));
+String num = request.getParameter("num");
+String pageNum = request.getParameter("pageNum");
 
 
 %>
@@ -29,7 +30,7 @@ int num = Integer.parseInt(request.getParameter("num"));
 <body bgcolor="#e0ffff">
 <center><b>글삭제</b>
 <br>
-<form method="POST" name="delForm"  action="deletePro.jsp?pageNum=4" 
+<form method="POST" name="delForm"  action="deletePro.jsp?pageNum=<%=pageNum%>" 
    onsubmit="return deleteSave()"> 
  <table border="1" align="center" cellspacing="0" cellpadding="0" width="360">
   <tr height="30">
@@ -42,10 +43,10 @@ int num = Integer.parseInt(request.getParameter("num"));
 	   <input type="hidden" name="num" value="<%=num%>"></td>
  </tr>
  <tr height="30">
-    <td align=center bgcolor="<%=value_c%>">
+    <td align=center bgcolor="green">
       <input type="submit" value="글삭제" >
       <input type="button" value="글목록" 
-       onclick="document.location.href='list.jsp?pageNum=2'">     
+       onclick="document.location.href='list.jsp?pageNum=<%=pageNum%>'">     
    </td>
  </tr>  
 </table> 

@@ -108,14 +108,23 @@ public class BoardDAO {
 			ResultSet rs = null;
 			BoardDTO dto = null;
 			
+			
 			String sql = "select  * from board where num="+num;
 			try {
 			
 				con=pool.getConnection();
+				
+				sql ="update board set readcount=readcount+1 where num="+num;
+				pstmt=con.prepareStatement(sql);
+				System.out.println(pstmt.executeUpdate()+"조회수 증가");
+				
+				//pstmt.close(); // 원칙적으로는 닫고 새로 연결객체를 넣어야 한다.
+				
+				sql = "select  * from board where num="+num;
 				pstmt=con.prepareStatement(sql);
 				
 				System.out.println(sql);
-				System.out.println(rs=pstmt.executeQuery());
+				rs=pstmt.executeQuery();
 				
 				if(rs.next()) {
 					dto= new BoardDTO();
@@ -170,6 +179,7 @@ public class BoardDAO {
 					new_num = rs.getInt(1)+1;
 				}else new_num=1;
 				
+				//주석처리한것은  DB상에서 re_step을 asc로 정렬했을때 똑같이 나오게 하는 게시글 작성구문이다. ( re_step 수치가 역순으로 들어감 )
 //				if(rs.next()) {
 //				
 //				sql = "update board set re_step=re_step+1 where ref="+ref+"and re_step>"+re_step;
@@ -178,7 +188,7 @@ public class BoardDAO {
 
 				
 				if(num!=0) {//답변글
-					//sql = "select max(re_step) from board where ref="+ref+" and re_level="+re_level;
+					//sql = "select max(re_step) from board where ref="+ref+" and re_level="+re_level; 
 					//pstmt=con.prepareStatement(sql);
 					//rs=pstmt.executeQuery();
 					//if(rs.next()) {
@@ -228,10 +238,40 @@ public class BoardDAO {
 		
 		
 		
-		public boolean boardUpdate() {
+		public boolean boardUpdate(BoardDTO dto) {
 			
 			
-			return true;
+			System.out.println("getContent메소드 시작");
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			boolean check = false;
+			int check2 = 0;
+			// num , writer , subject , email , content , passwd
+			
+			String sql = "";
+			try {
+			
+				con=pool.getConnection();
+				
+				sql ="update board set writer=?,subject=?,email=?,content=?,passwd=?  where num="+dto.getNum();
+				pstmt=con.prepareStatement(sql);
+				pstmt.setString(1, dto.getWriter());
+				pstmt.setString(2, dto.getSubject());
+				pstmt.setString(3, dto.getEmail());
+				pstmt.setString(4, dto.getContent());
+				pstmt.setString(5, dto.getPasswd());
+								
+				if(pstmt.executeUpdate()>0) {
+					check=true;
+				}
+				
+			
+	}catch(Exception e) {
+		System.out.println("게시글 정보불러오기 실패"+e);
+	}finally {
+		pool.freeConnection(con,pstmt);
+	}
+			return check;
 		}
 		
 		

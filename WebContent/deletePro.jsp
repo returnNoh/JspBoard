@@ -8,6 +8,7 @@
 <%
 String passwd = request.getParameter("passwd");
 int num = Integer.parseInt(request.getParameter("num"));
+String pageNum = request.getParameter("pageNum");
 BoardDAO dao = new BoardDAO();
 
 boolean check = dao.boardDelete(passwd, num);
@@ -16,12 +17,12 @@ if(check==true){
 %>
 <script>
 alert("삭제성공");
-location.href="list.jsp";
+location.href="list.jsp?pageNum=<%=pageNum%>";
 </script>
 <%}else{ %>
 <script>
 alert("삭제실패");
-location.href="list.jsp";
+location.href="list.jsp?pageNum=<%=pageNum%>";
 </script>
 <%} %>
 </head>
