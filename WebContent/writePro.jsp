@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="NIW.*"%>
+    pageEncoding="UTF-8" import="NIW.*,java.sql.Timestamp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,26 +13,17 @@ request.setCharacterEncoding("UTF-8");
 <jsp:setProperty property="*" name="dto"/>
 
 <%
-
+System.out.println("writePro 들어옴");
+Timestamp temp = new Timestamp(System.currentTimeMillis());
+dto.setReg_date(temp);
+dto.setIp(request.getRemoteAddr());
 BoardDAO dao = new BoardDAO();
-boolean check = dao.boardWrite(dto);
 
-if(check){
+dao.insertArticle(dto);
+
+response.sendRedirect("list.jsp"); 
 %>
-<script>
-alert("작성 성공")
-location.href="list.jsp"
-</script>
-<%
-}else{
-%>
-<script>
-alert("작성 오류")
-location.href="list.jsp"
-</script>
-<%
-}
-%>
+
 <body>
 
 </body>

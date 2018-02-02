@@ -61,7 +61,7 @@ public class BoardDAO {
 		ArrayList<BoardDTO> zipcode = new ArrayList(end); // 생성자로 초기 공간을 지정
 		BoardDTO code ;
 		
-		String sql = "select  * from board order by ref desc,re_step asc limit "+start+","+end;
+		String sql = "select  * from board order by ref desc,re_step asc limit "+(start-1)+","+end;
 		try {
 			con=pool.getConnection();
 			pstmt=con.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class BoardDAO {
 	
 	
 	
-	
+	// 글 상세보기
 		public BoardDTO getContent(int num) {
 		
 			System.out.println("getContent메소드 시작");
@@ -144,44 +144,94 @@ public class BoardDAO {
 		
 		
 		
-		
-		public boolean boardWrite(BoardDTO dto) {
-			
+		//글작성
+		public void insertArticle(BoardDTO dto) {
+					//반환값 없는것으로 만들어보기
 			System.out.println("boardWrite (new) 메소드 시작");
 			Connection con = null;
 			PreparedStatement pstmt = null;
-			boolean check =false;
+			ResultSet rs = null; // 강사님 설계 -> select max해서 넘버에 넣는설계라서 ResultSet객체가 필요
 			
+			int num = dto.getNum(); // 0이라면 신규글
+			int ref = dto.getRef();
+			int re_step = dto.getRe_step();
+			int re_level = dto.getRe_level()+1;
+			int new_num =0;
 			
-			String sql = "insert into board values(?,?,?,?,?,?,0,0,0,0,?,?)"; // 신규니깐 기본값이 0인것은 0으로 지정해도됨.
+			String sql = "insert into board values(null,?,?,?,?,?,?,?,?,?,?,?)"; // 신규라면 기본값이 0인것은 0으로 지정해도됨.
+			sql = "select max(num) from board";
 			try {
 			
 				con=pool.getConnection();
 				pstmt=con.prepareStatement(sql);
-				pstmt.setInt(1, dto.getNum());
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {//글번호 최대값찾기
+					new_num = rs.getInt(1)+1;
+				}else new_num=1;
+				
+//				if(rs.next()) {
+//				
+//				sql = "update board set re_step=re_step+1 where ref="+ref+"and re_step>"+re_step;
+//				pstmt=con.prepareStatement(sql);
+//				System.out.println(pstmt.executeUpdate());
+
+				
+				if(num!=0) {//답변글
+					//sql = "select max(re_step) from board where ref="+ref+" and re_level="+re_level;
+					//pstmt=con.prepareStatement(sql);
+					//rs=pstmt.executeQuery();
+					//if(rs.next()) {
+						//re_step=rs.getInt(1)+1;
+						sql = "update board set re_step=re_step+1 where ref="+ref+" and re_step>"+re_step;
+						System.out.println(sql);
+						pstmt=con.prepareStatement(sql);
+						System.out.println(pstmt.executeUpdate());
+						re_step++;
+					//} // 설계상 답변글 썼을때 답변글의 y 축위치 re_step위치가 제일 위에 위치하는가 아래에 위치하는가 차이?
+					
+					
+				}else {//신규글
+					ref=new_num;
+					re_step=0;
+					re_level=0;
+				}
+				
+				
+				sql = "insert into board values(?,?,?,?,?,?,?,?,?,?,?,?)"; // 타임스탬프에 now()를 넣어서 DB에서 값을 넣게 할 수 있다.
+				pstmt=con.prepareStatement(sql);
+				pstmt.setInt(1,new_num);
 				pstmt.setString(2, dto.getWriter());
 				pstmt.setString(3, dto.getEmail());
 				pstmt.setString(4, dto.getSubject());
 				pstmt.setString(5, dto.getPasswd());
 				pstmt.setTimestamp(6, dto.getReg_date());
-				//pstmt.setInt(7, dto.getReadcount()); // 0이여도 됨
-				//pstmt.setInt(8, dto.getRef()); //0 이여도됨
-				//pstmt.setInt(9, dto.getRe_step()); // 0이여도 됨
-				//pstmt.setInt(10, dto.getRe_level()); // 0이여도 됨
+				pstmt.setInt(7, 0); 
+				//---------------- 신규글과 답변글의 수치가 다른 값
+				pstmt.setInt(8, ref); 
+				pstmt.setInt(9, re_step); 
+				pstmt.setInt(10, re_level); 
+				//----------------
 				pstmt.setString(11, dto.getContent());
 				pstmt.setString(12, dto.getIp());
-				
-				int check2=pstmt.executeUpdate();
-				if(check2>0)check=true;
-				
+						
 				System.out.println(sql);
+				
+				System.out.println(pstmt.executeUpdate());
 	}catch(Exception e) {
 		System.out.println("게시글 작성 실패"+e);
 	}finally {
-		pool.freeConnection(con,pstmt);
+		pool.freeConnection(con,pstmt,rs);
 	}
+		}
+	
+		
+		
+		
+		public boolean boardUpdate() {
 			
-			return check;
+			
+			return true;
 		}
 		
 		

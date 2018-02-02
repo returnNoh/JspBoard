@@ -12,7 +12,12 @@ BoardDAO dao = new BoardDAO();
 //System.out.println(request.getParameter("num"));
 
 int num = 0;
+if(request.getParameter("num")!=null)
 num = Integer.parseInt(request.getParameter("num"));
+int pageNum=0;
+if(request.getParameter("pageNum")!=null)
+pageNum =Integer.parseInt(request.getParameter("pageNum"));
+
 BoardDTO dto = dao.getContent(num);
 
 %>
@@ -51,13 +56,13 @@ BoardDTO dto = dao.getContent(num);
   <tr height="30">      
     <td colspan="4" bgcolor="#b0e0e6" align="right" > 
 	  <input type="button" value="글수정" 
-       onclick="document.location.href='updateForm.jsp?num=<%=dto.getNum()%>&pageNum=1'">
+       onclick="document.location.href='updateForm.jsp?num=<%=dto.getNum()%>&pageNum=<%=pageNum%>'">
 	   &nbsp;&nbsp;&nbsp;&nbsp;
 	  <input type="button" value="글삭제" 
-       onclick="document.location.href='deleteForm.jsp?num=<%=dto.getNum()%>&pageNum=2'">
+       onclick="document.location.href='deleteForm.jsp?num=<%=dto.getNum()%>&pageNum=<%=pageNum%>'">
 	   &nbsp;&nbsp;&nbsp;&nbsp;
       <input type="button" value="답글쓰기" 
-       onclick="document.location.href='writeForm.jsp?num=4&ref=0&re_step=0&re_level=0'">
+       onclick="document.location.href='writeForm.jsp?num=<%=dto.getNum()%>&ref=<%=dto.getRef()%>&re_step=<%=dto.getRe_step()%>&re_level=<%=dto.getRe_level()%>'">
 	   &nbsp;&nbsp;&nbsp;&nbsp;
        <input type="button" value="글목록" 
        onclick="document.location.href='list.jsp?pageNum=1'">
