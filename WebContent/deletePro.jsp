@@ -22,7 +22,7 @@ location.href="list.jsp?pageNum=<%=pageNum%>";
 <%}else{ %>
 <script>
 alert("삭제실패");
-location.href="list.jsp?pageNum=<%=pageNum%>";
+history.back();
 </script>
 <%} %>
 </head>

@@ -61,7 +61,7 @@ public class BoardDAO {
 		ArrayList<BoardDTO> zipcode = new ArrayList(end); // 생성자로 초기 공간을 지정
 		BoardDTO code ;
 		
-		String sql = "select  * from board order by ref desc,re_step asc limit "+(start-1)+","+end;
+		String sql = "select  * from board order by ref desc,re_step asc limit "+(start)+","+end;
 		try {
 			con=pool.getConnection();
 			pstmt=con.prepareStatement(sql);
@@ -127,19 +127,20 @@ public class BoardDAO {
 				rs=pstmt.executeQuery();
 				
 				if(rs.next()) {
-					dto= new BoardDTO();
-					dto.setNum(rs.getInt("num"));
-					dto.setWriter(rs.getString("writer"));
-					dto.setEmail(rs.getString("email"));
-					dto.setSubject(rs.getString("subject"));
-					dto.setContent(rs.getString("content"));
-					dto.setPasswd(rs.getString("passwd"));
-					dto.setReg_date(rs.getTimestamp("reg_date"));
-					dto.setReadcount(rs.getInt("readcount"));
-					dto.setIp(rs.getString("ip"));
-					dto.setRef(rs.getInt("ref"));
-					dto.setRe_step(rs.getInt("re_step"));
-					dto.setRe_level(rs.getInt("re_level"));
+					dto = makeContentFromResult(rs);
+//					dto= new BoardDTO();
+//					dto.setNum(rs.getInt("num"));
+//					dto.setWriter(rs.getString("writer"));
+//					dto.setEmail(rs.getString("email"));
+//					dto.setSubject(rs.getString("subject"));
+//					dto.setContent(rs.getString("content"));
+//					dto.setPasswd(rs.getString("passwd"));
+//					dto.setReg_date(rs.getTimestamp("reg_date"));
+//					dto.setReadcount(rs.getInt("readcount"));
+//					dto.setIp(rs.getString("ip"));
+//					dto.setRef(rs.getInt("ref"));
+//					dto.setRe_step(rs.getInt("re_step"));
+//					dto.setRe_level(rs.getInt("re_level"));
 				}
 			
 	}catch(Exception e) {
@@ -237,6 +238,26 @@ public class BoardDAO {
 	
 		
 		
+		//업데이트 메소드를 클래스 내부에서만 사용하는 형태로 사용하는경우를 생각하면 ..
+		//BoardDTO를 반환하는 메소드 만들어서 코드 재사용
+		private BoardDTO makeContentFromResult(ResultSet rs) throws Exception{
+		BoardDTO dto= new BoardDTO();
+		dto.setNum(rs.getInt("num"));
+		dto.setWriter(rs.getString("writer"));
+		dto.setEmail(rs.getString("email"));
+		dto.setSubject(rs.getString("subject"));
+		dto.setContent(rs.getString("content"));
+		dto.setPasswd(rs.getString("passwd"));
+		dto.setReg_date(rs.getTimestamp("reg_date"));
+		dto.setReadcount(rs.getInt("readcount"));
+		dto.setIp(rs.getString("ip"));
+		dto.setRef(rs.getInt("ref"));
+		dto.setRe_step(rs.getInt("re_step"));
+		dto.setRe_level(rs.getInt("re_level"));
+		
+		return dto;
+		
+		}
 		
 		public boolean boardUpdate(BoardDTO dto) {
 			
@@ -244,27 +265,38 @@ public class BoardDAO {
 			System.out.println("getContent메소드 시작");
 			Connection con = null;
 			PreparedStatement pstmt = null;
+			ResultSet rs = null;
 			boolean check = false;
 			int check2 = 0;
 			// num , writer , subject , email , content , passwd
-			
+			// 암호 먼저 체크 후 업데이트 하는 형식으로 해도 될것같음.
 			String sql = "";
 			try {
+				
+				
 			
 				con=pool.getConnection();
+				sql = "select num from board where passwd=?";
 				
-				sql ="update board set writer=?,subject=?,email=?,content=?,passwd=?  where num="+dto.getNum();
+				pstmt=con.prepareStatement(sql);
+				pstmt.setString(1, dto.getPasswd());
+				System.out.println();
+				rs=pstmt.executeQuery();
+				if(rs.next()) {
+				
+				
+				sql ="update board set writer=?,subject=?,email=?,content=? where num="+dto.getNum();
 				pstmt=con.prepareStatement(sql);
 				pstmt.setString(1, dto.getWriter());
 				pstmt.setString(2, dto.getSubject());
 				pstmt.setString(3, dto.getEmail());
 				pstmt.setString(4, dto.getContent());
-				pstmt.setString(5, dto.getPasswd());
-								
+				
+				
 				if(pstmt.executeUpdate()>0) {
 					check=true;
 				}
-				
+				}
 			
 	}catch(Exception e) {
 		System.out.println("게시글 정보불러오기 실패"+e);
@@ -313,6 +345,56 @@ public class BoardDAO {
 			
 			return check;
 		}
+		
+		
+		public BoardDTO getUpdateContent(int num) {
+			
+			System.out.println("getContent메소드 시작");
+			Connection con = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			BoardDTO dto = null;
+			
+			
+			String sql = "select  * from board where num="+num;
+			try {
+			
+				con=pool.getConnection();
+
+				//pstmt.close(); // 원칙적으로는 닫고 새로 연결객체를 넣어야 한다.
+				
+				pstmt=con.prepareStatement(sql);
+				
+				System.out.println(sql);
+				rs=pstmt.executeQuery();
+				
+				if(rs.next()) {
+					dto = makeContentFromResult(rs);
+//					dto= new BoardDTO();
+//					dto.setNum(rs.getInt("num"));
+//					dto.setWriter(rs.getString("writer"));
+//					dto.setEmail(rs.getString("email"));
+//					dto.setSubject(rs.getString("subject"));
+//					dto.setContent(rs.getString("content"));
+//					dto.setPasswd(rs.getString("passwd"));
+//					dto.setReg_date(rs.getTimestamp("reg_date"));
+//					dto.setReadcount(rs.getInt("readcount"));
+//					dto.setIp(rs.getString("ip"));
+//					dto.setRef(rs.getInt("ref"));
+//					dto.setRe_step(rs.getInt("re_step"));
+//					dto.setRe_level(rs.getInt("re_level"));
+				}
+			
+	}catch(Exception e) {
+		System.out.println("게시글 정보불러오기 실패"+e);
+	}finally {
+		pool.freeConnection(con,pstmt,rs);
+	}
+			return dto;
+	
+}	
+
+		
 		
 			
 }

@@ -17,14 +17,14 @@
 		
 
 		//3 보여줄 단위 개수 (레코드 , 페이지 , 블록 ) 설정
-				int pageSize = 5;         // 한페이지당 보여주는 레코드갯수    
-			    int blockSize = 5;    //한 블록당 보여주는 페이지의 수
+				int pageSize = 7;         // 한페이지당 보여주는 레코드갯수    
+			    int blockSize = 10;    //한 블록당 보여주는 페이지의 수
 		
 		//2 전체 레코드 개수 확인
 		int count = dao.getArticleCount(); // 레코드개수
-			    
+			    System.out.println("개수 체크용 "+count);
 		// DB상의 레코드 시작 번호 limit 수치
-		int startRow = (currentPage-1)*pageSize+1;
+		int startRow = (currentPage-1)*pageSize;
 		// 
 		int endRow = currentPage*pageSize;
 		
@@ -34,12 +34,13 @@
 		
 	    // beginPerPage  계산  (페이지별게시물 번호 제일 높은것)
 		int beginPerPage = count-(currentPage-1)*pageSize;
+		
 		//number=count-(currentPage-1)*pageSize;
 		
 		
 		ArrayList<BoardDTO> list = null;
 		if(count>0){
-		list = dao.getArticles(currentPage, pageSize);
+		list = dao.getArticles(startRow, pageSize);
 		}
 		BoardDTO dto = null;
 			
@@ -72,7 +73,7 @@ if(count==0){
       <td align="center"  width="50" >조 회</td> 
       <td align="center"  width="100" >IP</td>    
     </tr>
-    <%for(int i=0;i<list.size();i++){ dto=list.get(i); System.out.println(dto.getRe_level()); %>
+    <%for(int i=0;i<list.size();i++){ dto=list.get(i); %>
    <tr height="30">
     <td align="center"  width="50" ><%=beginPerPage--%></td>
     <td  width="250" >

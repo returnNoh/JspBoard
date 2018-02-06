@@ -22,7 +22,8 @@ pageNum =Integer.parseInt(request.getParameter("pageNum"));
 
 BoardDAO dao = new BoardDAO();
 //System.out.println(request.getParameter("num"));
-BoardDTO dto = dao.getContent(num);
+BoardDTO dto = dao.getUpdateContent(num);
+//원래 있던 게시글 확인 메소드를 사용하면 조회수가 증가하므로 조회수 증가를 막고싶다면 따로 메소드를 만들거나 조건을 주어야한다.
 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh mm");
 
 

@@ -15,18 +15,25 @@ request.setCharacterEncoding("UTF-8");
 <jsp:setProperty property="*" name="dto"/>
 <%
 BoardDAO dao = new BoardDAO();
+String pageNum = request.getParameter("pageNum");
 boolean check = dao.boardUpdate(dto);
 
 if(check){
 %>
 <script>
 alert("수정 성공");
+location.href = "list.jsp?pageNum=<%=pageNum%>";
+<%--  
+<meta http-equiv="Refresh" content="0;url=list.jsp?pageNum=<%=pageNum%>" 
+태그로 이동하는방법.(html로 이동하는법)  오타나면 흰화면만 나옴
+--%>
 </script>
 <%}else{ %>
 <script>
 alert("수정 실패");
+history.back();
 </script>
-<%}response.sendRedirect("list.jsp?pageNum="+request.getParameter("pageNum"));%>
+<%}%>
 </head>
 <body>
 
